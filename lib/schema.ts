@@ -3,10 +3,12 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 export const DATABASE_NAME = 'finance.db';
 
 export type Currency = 'CUP' | 'USD';
-export type TransactionType = 'expense' | 'income';
+export type TransactionType = 'expense' | 'income' | 'exchange';
+export type PaymentMethod = 'cash' | 'transfer';
 
 export interface Settings {
-  baseCUP: number;
+  baseCUPcash: number;
+  baseCUPtransfer: number;
   baseUSD: number;
   exchangeRate: number;
   initialized: boolean;
@@ -16,7 +18,6 @@ export interface Category {
   id: number;
   name: string;
   type: TransactionType;
-  isCustom: boolean;
 }
 
 export interface Transaction {
@@ -24,9 +25,14 @@ export interface Transaction {
   type: TransactionType;
   amount: number;
   currency: Currency;
+  method: PaymentMethod | null;
   categoryId: number | null;
   note: string | null;
   date: string;
+  toAmount: number | null;
+  toCurrency: Currency | null;
+  rate: number | null;
+  changeCup: number | null;
 }
 
 export interface CategoryAggregate {
@@ -36,7 +42,7 @@ export interface CategoryAggregate {
 }
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 1;
+  const DATABASE_VERSION = 5;
   const versionRow = await db.getFirstAsync<{ user_version: number }>(
     'PRAGMA user_version'
   );
@@ -73,29 +79,60 @@ CREATE TABLE IF NOT EXISTS transactions (
   FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL
 );
 `);
-
-    const defaultCategories: Array<{ name: string; type: TransactionType }> = [
-      { name: 'Comida', type: 'expense' },
-      { name: 'Transporte', type: 'expense' },
-      { name: 'Salud', type: 'expense' },
-      { name: 'Servicios', type: 'expense' },
-      { name: 'Ropa', type: 'expense' },
-      { name: 'Entretenimiento', type: 'expense' },
-      { name: 'Otros Gastos', type: 'expense' },
-      { name: 'Salario', type: 'income' },
-      { name: 'Ventas', type: 'income' },
-      { name: 'Regalos', type: 'income' },
-      { name: 'Otros Ingresos', type: 'income' },
-    ];
-
-    for (const category of defaultCategories) {
-      await db.runAsync('INSERT INTO categories (name, type, isCustom) VALUES (?, ?, 0)', [
-        category.name,
-        category.type,
-      ]);
-    }
-
     currentDbVersion = 1;
+  }
+
+  if (currentDbVersion === 1) {
+    // Las categorías son creadas solo por el usuario. Se eliminan las predefinidas.
+    await db.runAsync("DELETE FROM categories WHERE isCustom = 0");
+    await db.execAsync(`ALTER TABLE categories RENAME TO categories_old;
+CREATE TABLE categories (
+  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL
+);
+INSERT INTO categories (id, name, type) SELECT id, name, type FROM categories_old WHERE isCustom = 1;
+DROP TABLE categories_old;`);
+    currentDbVersion = 2;
+  }
+
+  if (currentDbVersion === 2) {
+    // Método de pago para CUP (efectivo/transferencia).
+    await db.execAsync(`
+ALTER TABLE transactions ADD COLUMN method TEXT;
+UPDATE transactions SET method = 'cash' WHERE currency = 'CUP' AND method IS NULL;
+`);
+    // El capital CUP antiguo se asume en efectivo.
+    const cupRow = await db.getFirstAsync<{ value: string }>(
+      "SELECT value FROM settings WHERE key = 'baseCUP'"
+    );
+    if (cupRow) {
+      await db.runAsync(
+        "INSERT OR REPLACE INTO settings (key, value) VALUES ('baseCUPcash', ?)",
+        cupRow.value
+      );
+      await db.runAsync(
+        "INSERT OR REPLACE INTO settings (key, value) VALUES ('baseCUPtransfer', '0')"
+      );
+      await db.runAsync("DELETE FROM settings WHERE key = 'baseCUP'");
+    }
+    currentDbVersion = 3;
+  }
+
+  if (currentDbVersion === 3) {
+    // Cambio de moneda: lado recibido y precio (CUP por 1 USD).
+    await db.execAsync(`
+ALTER TABLE transactions ADD COLUMN to_amount REAL;
+ALTER TABLE transactions ADD COLUMN to_currency TEXT;
+ALTER TABLE transactions ADD COLUMN rate REAL;
+`);
+    currentDbVersion = 4;
+  }
+
+  if (currentDbVersion === 4) {
+    // Vuelto en CUP cuando se paga en USD.
+    await db.execAsync(`ALTER TABLE transactions ADD COLUMN change_cup REAL;`);
+    currentDbVersion = 5;
   }
 
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
