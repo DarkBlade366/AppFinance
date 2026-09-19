@@ -380,9 +380,11 @@ export async function totalsInMonthByCurrency(
 
 export function formatMoney(amount: number, currency: 'CUP' | 'USD'): string {
   const rounded = Math.round(amount * 100) / 100;
-  const formatted = rounded.toLocaleString('es-CU', {
+  const formatted = Math.abs(rounded).toLocaleString('es-CU', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });
-  return currency === 'CUP' ? `$${formatted} CUP` : `$${formatted} USD`;
+  const sign = rounded < 0 ? '-' : '';
+  const symbol = currency === 'CUP' ? `$${formatted} CUP` : `$${formatted} USD`;
+  return `${sign}${symbol}`;
 }

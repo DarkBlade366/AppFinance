@@ -161,8 +161,6 @@ export default function HistoryScreen() {
   const isCurrentMonth = month === now.monthNumber && year === now.year;
   const balanceCup = totals ? totals.CUP.income - totals.CUP.expense : 0;
   const balanceUsd = totals ? totals.USD.income - totals.USD.expense : 0;
-  const balanceColor =
-    balanceCup >= 0 && balanceUsd >= 0 ? Colors.success : Colors.danger;
 
   return (
     <Screen scroll>
@@ -240,13 +238,17 @@ export default function HistoryScreen() {
           <View style={styles.statsRow}>
             <StatCard
               label="Balance en CUP"
-              value={`${balanceCup >= 0 ? '+' : ''}${db.formatMoney(balanceCup, 'CUP')}`}
-              valueColor={balanceColor}
+              value={`${balanceCup > 0 ? '+' : ''}${db.formatMoney(balanceCup, 'CUP')}`}
+              valueColor={
+                balanceCup > 0 ? Colors.success : balanceCup < 0 ? Colors.danger : Colors.text
+              }
             />
             <StatCard
               label="Balance en USD"
-              value={`${balanceUsd >= 0 ? '+' : ''}${db.formatMoney(balanceUsd, 'USD')}`}
-              valueColor={balanceColor}
+              value={`${balanceUsd > 0 ? '+' : ''}${db.formatMoney(balanceUsd, 'USD')}`}
+              valueColor={
+                balanceUsd > 0 ? Colors.success : balanceUsd < 0 ? Colors.danger : Colors.text
+              }
             />
           </View>
           <View style={styles.statsRow}>

@@ -188,13 +188,16 @@ function SummaryRow({
   positive?: boolean;
   balance?: boolean;
 }) {
-  const color =
-    balance || positive
-      ? cup >= 0 && usd >= 0
-        ? Colors.success
-        : Colors.danger
-      : Colors.danger;
-  const sign = (positive || balance) && (cup > 0 || usd > 0) ? '+' : '';
+  const colorFor = (value: number) => {
+    if (balance) {
+      if (value > 0) return Colors.success;
+      if (value < 0) return Colors.danger;
+      return Colors.text;
+    }
+    return positive ? Colors.success : Colors.danger;
+  };
+  const signFor = (value: number) =>
+    (positive || balance) && value > 0 ? '+' : '';
   const showSplit = !balance && (cupCash ?? 0) + (cupTransfer ?? 0) > 0;
   return (
     <View style={styles.summaryRow}>
@@ -214,12 +217,12 @@ function SummaryRow({
         )}
       </View>
       <View style={styles.summaryValues}>
-        <ThemedText style={[styles.summaryAmount, { color }]}>
-          {sign}
+        <ThemedText style={[styles.summaryAmount, { color: colorFor(cup) }]}>
+          {signFor(cup)}
           {db.formatMoney(cup, 'CUP')}
         </ThemedText>
-        <ThemedText style={[styles.summaryAmount, { color }]}>
-          {sign}
+        <ThemedText style={[styles.summaryAmount, { color: colorFor(usd) }]}>
+          {signFor(usd)}
           {db.formatMoney(usd, 'USD')}
         </ThemedText>
       </View>
