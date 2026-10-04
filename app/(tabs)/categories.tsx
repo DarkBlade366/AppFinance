@@ -1,6 +1,10 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  KeyboardProvider,
+} from 'react-native-keyboard-controller';
 
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui/card';
@@ -29,6 +33,7 @@ export default function CategoriesScreen() {
   }, [sqlite]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- carga de datos; los setState ocurren tras await
     load();
   }, [load, version]);
 
@@ -130,10 +135,12 @@ export default function CategoriesScreen() {
         transparent
         animationType="fade"
         onRequestClose={() => setEditing(null)}>
-        <View style={styles.modalOverlay}>
-          <Pressable style={styles.modalBackdrop} onPress={() => setEditing(null)} />
-          {editing && <CategoryEditor key={editing.id} category={editing} onClose={() => setEditing(null)} />}
-        </View>
+        <KeyboardProvider>
+          <KeyboardAvoidingView style={styles.modalOverlay} behavior="padding">
+            <Pressable style={styles.modalBackdrop} onPress={() => setEditing(null)} />
+            {editing && <CategoryEditor key={editing.id} category={editing} onClose={() => setEditing(null)} />}
+          </KeyboardAvoidingView>
+        </KeyboardProvider>
       </Modal>
     </>
   );
@@ -293,7 +300,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  modalBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.6)' },
+  modalBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
   modalCard: {
     width: '100%',
     backgroundColor: Colors.card,

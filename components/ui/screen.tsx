@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { PropsWithChildren, ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -15,12 +16,15 @@ export function Screen({ children, scroll }: PropsWithChildren<{ scroll?: boolea
         style={StyleSheet.absoluteFill}
       />
       {scroll ? (
-        <ScrollView
+        <KeyboardAwareScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          bottomOffset={24}>
           {content}
-        </ScrollView>
+        </KeyboardAwareScrollView>
       ) : (
         content
       )}

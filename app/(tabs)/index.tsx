@@ -1,6 +1,6 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, AppState, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui/card';
@@ -36,6 +36,15 @@ export default function HomeScreen() {
   const [capital, setCapital] = useState<Capital | null>(null);
   const [monthTotals, setMonthTotals] = useState<MonthTotals | null>(null);
   const [editTarget, setEditTarget] = useState<EditTarget>(null);
+  // Los datos del capital arrancan ocultos y se vuelven a ocultar al salir de la app.
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') setShown(false);
+    });
+    return () => sub.remove();
+  }, []);
 
   const load = useCallback(async () => {
     const s = await db.getSettings(sqlite);
@@ -48,6 +57,7 @@ export default function HomeScreen() {
   }, [sqlite]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- carga de datos; los setState ocurren tras await
     load();
   }, [load, version]);
 
@@ -79,30 +89,42 @@ export default function HomeScreen() {
   const monthName = MONTH_NAMES[Number(now.month) - 1];
   const convertedCup = capital.CUP.total + capital.USD * rate;
   const convertedUsd = capital.USD + capital.CUP.total / rate;
+  const mask = (value: string) => (shown ? value : '••••••');
 
   return (
     <Screen scroll>
       <ScreenHeader
         title="Mi capital"
         subtitle={`Capital base · ${monthName} ${now.year}`}
-        right={<AppLogo />}
+        right={
+          <View style={styles.headerRight}>
+            <Pressable
+              onPress={() => setShown((s) => !s)}
+              hitSlop={10}
+              style={styles.eyeButton}
+              accessibilityLabel={shown ? 'Ocultar capital' : 'Mostrar capital'}>
+              <IconSymbol name={shown ? 'eye.slash' : 'eye'} size={24} color={Colors.tint} />
+            </Pressable>
+            <AppLogo />
+          </View>
+        }
       />
 
       <Card style={styles.balanceCard}>
         <ThemedText style={styles.balanceLabel}>Capital total en CUP</ThemedText>
         <ThemedText style={[styles.balanceValue, { color: Colors.cup }]}>
-          {db.formatMoney(capital.CUP.total, 'CUP')}
+          {mask(db.formatMoney(capital.CUP.total, 'CUP'))}
         </ThemedText>
         <ThemedText style={styles.cupBreakdown}>
-          Efectivo: {db.formatMoney(capital.CUP.cash, 'CUP')}
+          Efectivo: {mask(db.formatMoney(capital.CUP.cash, 'CUP'))}
         </ThemedText>
         <ThemedText style={styles.cupBreakdown}>
-          Transferencia: {db.formatMoney(capital.CUP.transfer, 'CUP')}
+          Transferencia: {mask(db.formatMoney(capital.CUP.transfer, 'CUP'))}
         </ThemedText>
         <View style={styles.divider} />
         <ThemedText style={styles.balanceLabel}>Capital en USD</ThemedText>
         <ThemedText style={[styles.balanceValueUsd, { color: Colors.usd }]}>
-          {db.formatMoney(capital.USD, 'USD')}
+          {mask(db.formatMoney(capital.USD, 'USD'))}
         </ThemedText>
         <Pressable style={styles.editLink} onPress={() => setEditTarget('capital')} hitSlop={8}>
           <ThemedText style={styles.editLinkText}>Ajustar capital</ThemedText>
@@ -115,13 +137,13 @@ export default function HomeScreen() {
         <View style={styles.conversionRow}>
           <ThemedText style={styles.summaryLabel}>Total en CUP</ThemedText>
           <ThemedText style={[styles.summaryAmount, { color: Colors.cup }]}>
-            {db.formatMoney(convertedCup, 'CUP')}
+            {mask(db.formatMoney(convertedCup, 'CUP'))}
           </ThemedText>
         </View>
         <View style={styles.conversionRow}>
           <ThemedText style={styles.summaryLabel}>Total en USD</ThemedText>
           <ThemedText style={[styles.summaryAmount, { color: Colors.usd }]}>
-            {db.formatMoney(convertedUsd, 'USD')}
+            {mask(db.formatMoney(convertedUsd, 'USD'))}
           </ThemedText>
         </View>
         <View style={styles.divider} />
@@ -149,6 +171,7 @@ export default function HomeScreen() {
               cupCash={monthTotals.CUP.incomeCash}
               cupTransfer={monthTotals.CUP.incomeTransfer}
               positive
+              hidden={!shown}
             />
             <SummaryRow
               label="Gastos"
@@ -156,6 +179,7 @@ export default function HomeScreen() {
               usd={monthTotals.USD.expense}
               cupCash={monthTotals.CUP.expenseCash}
               cupTransfer={monthTotals.CUP.expenseTransfer}
+              hidden={!shown}
             />
             <View style={styles.divider} />
             <SummaryRow
@@ -163,6 +187,7 @@ export default function HomeScreen() {
               cup={monthTotals.CUP.income - monthTotals.CUP.expense}
               usd={monthTotals.USD.income - monthTotals.USD.expense}
               balance
+              hidden={!shown}
             />
           </>
         )}
@@ -179,6 +204,7 @@ function SummaryRow({
   cupTransfer,
   positive,
   balance,
+  hidden,
 }: {
   label: string;
   cup: number;
@@ -187,7 +213,9 @@ function SummaryRow({
   cupTransfer?: number;
   positive?: boolean;
   balance?: boolean;
+  hidden?: boolean;
 }) {
+  const mask = (value: string) => (hidden ? '••••••' : value);
   const colorFor = (value: number) => {
     if (balance) {
       if (value > 0) return Colors.success;
@@ -208,22 +236,22 @@ function SummaryRow({
         {showSplit && (
           <>
             <ThemedText style={styles.summarySplit}>
-              Efectivo {db.formatMoney(cupCash ?? 0, 'CUP')}
+              Efectivo {mask(db.formatMoney(cupCash ?? 0, 'CUP'))}
             </ThemedText>
             <ThemedText style={styles.summarySplit}>
-              Transferencia {db.formatMoney(cupTransfer ?? 0, 'CUP')}
+              Transferencia {mask(db.formatMoney(cupTransfer ?? 0, 'CUP'))}
             </ThemedText>
           </>
         )}
       </View>
       <View style={styles.summaryValues}>
         <ThemedText style={[styles.summaryAmount, { color: colorFor(cup) }]}>
-          {signFor(cup)}
-          {db.formatMoney(cup, 'CUP')}
+          {!hidden && signFor(cup)}
+          {mask(db.formatMoney(cup, 'CUP'))}
         </ThemedText>
         <ThemedText style={[styles.summaryAmount, { color: colorFor(usd) }]}>
-          {signFor(usd)}
-          {db.formatMoney(usd, 'USD')}
+          {!hidden && signFor(usd)}
+          {mask(db.formatMoney(usd, 'USD'))}
         </ThemedText>
       </View>
     </View>
@@ -368,6 +396,17 @@ function Field({
 
 const styles = StyleSheet.create({
   loading: { color: Colors.muted, textAlign: 'center', marginTop: 40 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  eyeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.card,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
   balanceCard: { gap: 8 },
   balanceLabel: { fontSize: 13, color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
   balanceValue: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },

@@ -39,6 +39,8 @@ const MAPPING = {
   'banknote': 'payments',
   'edit': 'edit',
   'arrow.left.arrow.right': 'swap-horiz',
+  'eye': 'visibility',
+  'eye.slash': 'visibility-off',
 } as const satisfies Record<string, MaterialIconName>;
 
 type IconSymbolName = keyof typeof MAPPING;

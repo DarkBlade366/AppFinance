@@ -1,14 +1,10 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useState } from 'react';
+import { Alert, Modal, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import {
-  Alert,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from 'react-native';
+  KeyboardAwareScrollView,
+  KeyboardProvider,
+} from 'react-native-keyboard-controller';
 
 import { ThemedText } from '@/components/themed-text';
 import { Card, StatCard } from '@/components/ui/card';
@@ -87,6 +83,7 @@ export default function HistoryScreen() {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- carga de datos; los setState ocurren tras await
     load(month, year);
   }, [load, month, year, version]);
 
@@ -253,7 +250,7 @@ export default function HistoryScreen() {
           </View>
           <View style={styles.statsRow}>
             <StatCard
-              label="Ingresos"
+              label="Ingresos CUP"
               value={db.formatMoney(totals.CUP.income, 'CUP')}
               valueColor={Colors.success}
               hints={[
@@ -262,13 +259,25 @@ export default function HistoryScreen() {
               ]}
             />
             <StatCard
-              label="Gastos"
+              label="Gastos CUP"
               value={db.formatMoney(totals.CUP.expense, 'CUP')}
               valueColor={Colors.danger}
               hints={[
                 `Efectivo ${db.formatMoney(totals.CUP.expenseCash, 'CUP')}`,
                 `Transferencia ${db.formatMoney(totals.CUP.expenseTransfer, 'CUP')}`,
               ]}
+            />
+          </View>
+          <View style={styles.statsRow}>
+            <StatCard
+              label="Ingresos USD"
+              value={db.formatMoney(totals.USD.income, 'USD')}
+              valueColor={Colors.success}
+            />
+            <StatCard
+              label="Gastos USD"
+              value={db.formatMoney(totals.USD.expense, 'USD')}
+              valueColor={Colors.danger}
             />
           </View>
         </>
@@ -371,7 +380,8 @@ export default function HistoryScreen() {
         transparent
         animationType="slide"
         onRequestClose={() => setEditing(null)}>
-        <View style={styles.modalOverlay}>
+        <KeyboardProvider>
+          <View style={styles.modalOverlay}>
           <Pressable style={styles.modalBackdrop} onPress={() => setEditing(null)} />
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
@@ -384,9 +394,10 @@ export default function HistoryScreen() {
             </View>
             {editing &&
               (editing.type === 'exchange' ? (
-                <ScrollView
+                <KeyboardAwareScrollView
                   showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="handled">
+                  keyboardShouldPersistTaps="handled"
+                  bottomOffset={24}>
                   <ExchangeForm
                     key={editing.id}
                     initial={{
@@ -399,11 +410,12 @@ export default function HistoryScreen() {
                     submitLabel="Guardar cambios"
                     onSubmit={(draft) => applyEditExchange(editing.id, draft)}
                   />
-                </ScrollView>
+                </KeyboardAwareScrollView>
               ) : (
-                <ScrollView
+                <KeyboardAwareScrollView
                   showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps="handled">
+                  keyboardShouldPersistTaps="handled"
+                  bottomOffset={24}>
                   <TransactionForm
                     key={editing.id}
                     initial={{
@@ -420,10 +432,11 @@ export default function HistoryScreen() {
                     onSubmit={(draft) => applyEdit(editing, draft)}
                     onCategoryCreated={(name) => toast.show(`Categoría "${name}" creada`)}
                   />
-                </ScrollView>
+                </KeyboardAwareScrollView>
               ))}
           </View>
-        </View>
+          </View>
+        </KeyboardProvider>
       </Modal>
     <Modal
         visible={!!detail}

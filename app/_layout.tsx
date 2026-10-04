@@ -1,6 +1,6 @@
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 
 import { ToastProvider } from '@/components/toast';
@@ -12,15 +12,17 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   return (
-    <DatabaseProvider>
-      <ToastProvider>
-        <ThemeProvider value={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: '#0B0F17' } }}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-          <StatusBar style="light" />
-        </ThemeProvider>
-      </ToastProvider>
-    </DatabaseProvider>
+    <KeyboardProvider>
+      <DatabaseProvider>
+        <ToastProvider>
+          <ThemeProvider value={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: '#0B0F17' } }}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+            <StatusBar style="light" />
+          </ThemeProvider>
+        </ToastProvider>
+      </DatabaseProvider>
+    </KeyboardProvider>
   );
 }
