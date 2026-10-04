@@ -1,3 +1,4 @@
+import { NavigationBar } from 'expo-navigation-bar';
 import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -20,6 +21,7 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="light" />
+            <NavigationBar style="auto" />
           </ThemeProvider>
         </ToastProvider>
       </DatabaseProvider>

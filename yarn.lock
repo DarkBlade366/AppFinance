@@ -3211,6 +3211,13 @@ expo-modules-jsi@~57.1.1:
   resolved "https://registry.npmmirror.com/expo-modules-jsi/-/expo-modules-jsi-57.1.1.tgz#0821e42a6a7b1b962cb14416889107481182f62b"
   integrity sha512-ssnwz3ZuIgCbZj5A3J6NlhQrXZojg+BjkeWrOWqVJhyMHlV/A/cRT7s986chKku97BFt6ucmDu6/BCzrV45Wcw==
 
+expo-navigation-bar@~57.0.3:
+  version "57.0.3"
+  resolved "https://registry.npmmirror.com/expo-navigation-bar/-/expo-navigation-bar-57.0.3.tgz#28d8564335480fe7927d388aa382bdc3864a6a2c"
+  integrity sha512-+9Q/2OQtpYjObmby1EMpFyhfK5LyT/oHD3lfkU6Z9as8f7arq7vGTlAXzYDP+xK2t76g9TFk//zya56vN5CkzA==
+  dependencies:
+    debug "^4.3.2"
+
 expo-router@~57.0.24:
   version "57.0.24"
   resolved "https://registry.npmmirror.com/expo-router/-/expo-router-57.0.24.tgz#169b8b0c92c6381bc13b3ce360d7528845cf7294"
