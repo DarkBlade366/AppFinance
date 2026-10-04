@@ -5,7 +5,7 @@ Aplicación móvil para llevar el control de finanzas personales (CUP / USD). Pe
 ## Visión rápida
 
 - **Nombre:** Cuentas Claras
-- **Stack:** Expo (SDK ~54), React Native, TypeScript, expo-router
+- **Stack:** Expo (SDK ~57), React Native, TypeScript, expo-router
 - **Base de datos local:** SQLite (expo-sqlite) — archivo: `finance.db`
 
 ## Requisitos
@@ -91,10 +91,10 @@ Al terminar se genera un enlace de descarga para el `.apk`. Se transfiere al cel
 
 Extraídas de `package.json`:
 
-- `expo`: ~54.0.37
-- `expo-router`: ~6.0.23
+- `expo`: ~57.0.26
+- `expo-router`: ~57.0.24
 - `expo-sqlite` — persistencia local
-- `react`, `react-native` (0.81.5)
+- `react` (19.2.3), `react-native` (0.86.3)
 - `react-native-reanimated`, `react-native-gesture-handler`
 - `@react-navigation/*` para navegación
 
@@ -131,7 +131,7 @@ El script `npm run reset-project` mueve el ejemplo inicial y deja un `app` vací
 
 - El archivo de configuración `app.json` contiene el esquema (`scheme: cuentas-claras`) y plugins (splash screen, expo-router, expo-sqlite).
 - Revisar [lib/schema.ts](lib/schema.ts) antes de cambiar la estructura DB: las migraciones son incrementales por `user_version`.
-- Si añade integraciones nativas, asegúrese de mantener las versiones compatibles con SDK 54.
+- Si añade integraciones nativas, asegúrese de mantener las versiones compatibles con SDK 57.
 
 ## Contribuir
 

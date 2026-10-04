@@ -21,8 +21,8 @@ export function ToastProvider({ children }: PropsWithChildren) {
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
   const [type, setType] = useState<ToastType>('success');
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(-24)).current;
+  const [opacity] = useState(() => new Animated.Value(0));
+  const [translateY] = useState(() => new Animated.Value(-24));
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const show = useCallback(
