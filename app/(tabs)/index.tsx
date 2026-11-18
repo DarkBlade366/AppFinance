@@ -1,6 +1,14 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, AppState, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  AppState,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui/card';
@@ -9,6 +17,7 @@ import { AppLogo } from '@/components/ui/logo';
 import { Screen, ScreenHeader } from '@/components/ui/screen';
 import { useToast } from '@/components/toast';
 import { Colors } from '@/constants/theme';
+import { exportBackup } from '@/lib/backup';
 import * as db from '@/lib/db';
 import { useRefresh } from '@/lib/refresh-context';
 import { currentMonth, MONTH_NAMES } from '@/lib/utils';
@@ -31,13 +40,39 @@ type EditTarget = 'capital' | 'rate' | null;
 
 export default function HomeScreen() {
   const sqlite = useSQLiteContext();
+  const toast = useToast();
   const { version, refresh } = useRefresh();
   const [settings, setSettings] = useState<db.Settings | null>(null);
   const [capital, setCapital] = useState<Capital | null>(null);
   const [monthTotals, setMonthTotals] = useState<MonthTotals | null>(null);
   const [editTarget, setEditTarget] = useState<EditTarget>(null);
+  const [exporting, setExporting] = useState(false);
   // Los datos del capital arrancan ocultos y se vuelven a ocultar al salir de la app.
   const [shown, setShown] = useState(false);
+
+  const handleExport = useCallback(async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const result = await exportBackup(sqlite);
+      const { transactions, categories } = result.counts;
+      if (result.shared) {
+        toast.show(
+          `Respaldo listo: ${transactions} movimientos, ${categories} categorías`
+        );
+      } else {
+        toast.show('Compartir no está disponible en este dispositivo', 'error');
+      }
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Error desconocido';
+      // Compartir cancelado por el usuario no es un error real.
+      if (!/cancel/i.test(message)) {
+        toast.show('No se pudo exportar el respaldo', 'error');
+      }
+    } finally {
+      setExporting(false);
+    }
+  }, [exporting, sqlite, toast]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
@@ -191,6 +226,30 @@ export default function HomeScreen() {
             />
           </>
         )}
+      </Card>
+
+      <Card>
+        <View style={styles.backupHeader}>
+          <IconSymbol name="square.and.arrow.up" size={20} color={Colors.tint} />
+          <ThemedText style={styles.cardTitle}>Respaldo de datos</ThemedText>
+        </View>
+        <ThemedText style={styles.backupHint}>
+          Exporta todos tus movimientos, categorías y capital a un archivo que
+          puedes guardar o enviarte. Útil para respaldar o migrar tus datos.
+        </ThemedText>
+        <Pressable
+          style={[styles.exportButton, exporting && styles.exportButtonDisabled]}
+          onPress={handleExport}
+          disabled={exporting}>
+          {exporting ? (
+            <ActivityIndicator color={Colors.tint} />
+          ) : (
+            <IconSymbol name="square.and.arrow.up" size={18} color={Colors.tint} />
+          )}
+          <ThemedText style={styles.exportButtonText}>
+            {exporting ? 'Exportando…' : 'Exportar datos'}
+          </ThemedText>
+        </Pressable>
       </Card>
     </Screen>
   );
@@ -419,6 +478,20 @@ const styles = StyleSheet.create({
   editLink: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   editLinkText: { color: Colors.tint, fontWeight: '700', fontSize: 14 },
   cardTitle: { fontSize: 17, fontWeight: '700', color: Colors.text },
+  backupHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  backupHint: { fontSize: 13, color: Colors.muted, lineHeight: 19 },
+  exportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: Colors.tint,
+    borderRadius: 14,
+    paddingVertical: 14,
+  },
+  exportButtonDisabled: { opacity: 0.6 },
+  exportButtonText: { color: Colors.tint, fontWeight: '700', fontSize: 15 },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
   summaryLeft: { flex: 1, gap: 3 },
   summaryLabel: { fontWeight: '600', color: Colors.text, fontSize: 15 },

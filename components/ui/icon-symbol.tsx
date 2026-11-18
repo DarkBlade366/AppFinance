@@ -41,6 +41,7 @@ const MAPPING = {
   'arrow.left.arrow.right': 'swap-horiz',
   'eye': 'visibility',
   'eye.slash': 'visibility-off',
+  'square.and.arrow.up': 'file-upload',
 } as const satisfies Record<string, MaterialIconName>;
 
 type IconSymbolName = keyof typeof MAPPING;

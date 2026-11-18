@@ -1,6 +1,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 export const DATABASE_NAME = 'finance.db';
+export const DATABASE_VERSION = 5;
 
 export type Currency = 'CUP' | 'USD';
 export type TransactionType = 'expense' | 'income' | 'exchange';
@@ -42,7 +43,6 @@ export interface CategoryAggregate {
 }
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 5;
   const versionRow = await db.getFirstAsync<{ user_version: number }>(
     'PRAGMA user_version'
   );

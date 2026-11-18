@@ -762,6 +762,24 @@
   dependencies:
     node-forge "^1.3.3"
 
+"@expo/config-plugins@^57.0.13":
+  version "57.0.13"
+  resolved "https://registry.npmmirror.com/@expo/config-plugins/-/config-plugins-57.0.13.tgz#faa40c6d764c5e5f8f338f393e974708922a8b6f"
+  integrity sha512-L/xRrE9kr5bzHGiRmaYliRvfc5OjUt5AdCYmeyRISpn7OGdE6S3W9Dv4wmacR3jX93LaaL7Yg+5pvuDRxEIKVw==
+  dependencies:
+    "@expo/config-types" "^57.0.2"
+    "@expo/json-file" "~11.0.1"
+    "@expo/plist" "^0.8.2"
+    "@expo/require-utils" "^57.0.7"
+    "@expo/sdk-runtime-versions" "^1.0.0"
+    chalk "^4.1.2"
+    debug "^4.3.5"
+    glob "^14.0.3"
+    semver "^7.5.4"
+    slugify "^1.6.6"
+    xcode "^4.0.0"
+    xml2js "0.6.0"
+
 "@expo/config-plugins@~57.0.9":
   version "57.0.9"
   resolved "https://registry.npmmirror.com/@expo/config-plugins/-/config-plugins-57.0.9.tgz#3fa42fb565f3662e518f0accc1653a9ac25f73f3"
@@ -998,6 +1016,14 @@
     base64-js "^1.5.1"
     xmlbuilder "^15.1.1"
 
+"@expo/plist@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.npmmirror.com/@expo/plist/-/plist-0.8.2.tgz#30e402e8a166aaa3ecbf32725136de08ae03afc7"
+  integrity sha512-KZtnreoUoSMm03FtRem9T0DHy9/a0jfTZIjuRTUu6nL19marlc/1yNXsl66F83vieXw+/9140EXJRZbRbM7I5g==
+  dependencies:
+    "@xmldom/xmldom" "^0.8.8"
+    xmlbuilder "^15.1.1"
+
 "@expo/prebuild-config@^57.0.16":
   version "57.0.16"
   resolved "https://registry.npmmirror.com/@expo/prebuild-config/-/prebuild-config-57.0.16.tgz#64e7697d93ed332e60c85730cd8d863619c177cf"
@@ -1018,6 +1044,15 @@
   version "57.0.5"
   resolved "https://registry.npmmirror.com/@expo/require-utils/-/require-utils-57.0.5.tgz#bde8d170b0b53fa1cd77aa73a305e5a16f4229a3"
   integrity sha512-kTAXj9lDFEIPMsbAOGCGbjBbMF0oi7CqkYM79KOX0DDD9wSwXmlKL1z2h8OwsrBf7mbOo2DjlRvZu4BEjrIxGw==
+  dependencies:
+    "@babel/code-frame" "^7.20.0"
+    "@babel/core" "^7.25.2"
+    "@babel/plugin-transform-modules-commonjs" "^7.24.8"
+
+"@expo/require-utils@^57.0.7":
+  version "57.0.7"
+  resolved "https://registry.npmmirror.com/@expo/require-utils/-/require-utils-57.0.7.tgz#db5e430c2e80b1ce909abc57825f2ec9c5c6e771"
+  integrity sha512-mZGG9A81/i+vuJbinvVCOmEA4KI3yekUnsQvcSKx2hRPHqbCuNA/kp+y6j1tp1wlW1EBydft5/NqAUVMpO9J9A==
   dependencies:
     "@babel/code-frame" "^7.20.0"
     "@babel/core" "^7.25.2"
@@ -1109,6 +1144,11 @@
   version "0.4.3"
   resolved "https://registry.npmmirror.com/@humanwhocodes/retry/-/retry-0.4.3.tgz#c2b9d2e374ee62c586d3adbea87199b1d7a7a6ba"
   integrity sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==
+
+"@isaacs/nonrecursive-glob-match@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/@isaacs/nonrecursive-glob-match/-/nonrecursive-glob-match-1.1.0.tgz#b1d69b8938aab4c292f7fde628c47dc1dbd737ef"
+  integrity sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==
 
 "@isaacs/ttlcache@^1.4.1":
   version "1.4.1"
@@ -2296,6 +2336,13 @@ brace-expansion@^1.1.7:
     balanced-match "^1.0.0"
     concat-map "0.0.1"
 
+brace-expansion@^5.0.12:
+  version "5.0.13"
+  resolved "https://registry.npmmirror.com/brace-expansion/-/brace-expansion-5.0.13.tgz#e2d4497370f7e385e6f96b57bd7ff11d77d85851"
+  integrity sha512-Vh3dmFbc4wZeox7M9I/0L9GfFd83Su4+yCck/OF9Gi/P/dAHn0RT7X4K9R7gMNMhDck3DvhR6QXsnQdjjgwNvQ==
+  dependencies:
+    balanced-match "^4.0.2"
+
 brace-expansion@^5.0.5:
   version "5.0.7"
   resolved "https://registry.npmmirror.com/brace-expansion/-/brace-expansion-5.0.7.tgz#1b0e46965b479dad65af737b4a02790a05498337"
@@ -3256,6 +3303,15 @@ expo-server@^57.0.3:
   resolved "https://registry.npmmirror.com/expo-server/-/expo-server-57.0.3.tgz#02e038a85453f1f4eb00024256b4b3cab949cace"
   integrity sha512-aK+LdKzauHSGmsOStZtyxdzv0zWssCkxTw3m4QuOhfDSJsZaMRTd9O41d8ixU/QfELTbaJ0oRNcF7JFV/7O9YQ==
 
+expo-sharing@~57.0.26:
+  version "57.0.26"
+  resolved "https://registry.npmmirror.com/expo-sharing/-/expo-sharing-57.0.26.tgz#5c930637b299d73359f7c51e6d0561f98e14b82a"
+  integrity sha512-Vwx6W4yd7vy+6jOZ334zW2ti8dfDyftyCxcv4IlifKnL08bxJe2yJw++VpQnTKhNMDv9TQPxNfLlg1EUXVq/6w==
+  dependencies:
+    "@expo/config-plugins" "^57.0.13"
+    "@expo/config-types" "^57.0.2"
+    "@expo/plist" "^0.8.2"
+
 expo-splash-screen@~57.0.9:
   version "57.0.9"
   resolved "https://registry.npmmirror.com/expo-splash-screen/-/expo-splash-screen-57.0.9.tgz#916e23cdfcb1538ba88e091692dedcb36b13b08d"
@@ -3567,6 +3623,15 @@ glob@^13.0.0:
     minimatch "^10.2.2"
     minipass "^7.1.3"
     path-scurry "^2.0.2"
+
+glob@^14.0.3:
+  version "14.0.6"
+  resolved "https://registry.npmmirror.com/glob/-/glob-14.0.6.tgz#40f3f37b4bbd06ad274ba87be801b59dcea71164"
+  integrity sha512-OwXjVP2svY5EyLY75Vek96C8qK43gqrt4xsZ+qSILdnaEiJPXkd62mcfUSNx/TQErQRdu5uM5kF67sfONragKw==
+  dependencies:
+    minimatch "^11.0.5"
+    minipass "^7.1.3"
+    path-scurry "^3.0.0"
 
 globals@^14.0.0:
   version "14.0.0"
@@ -4758,6 +4823,14 @@ minimatch@^10.2.2:
   dependencies:
     brace-expansion "^5.0.5"
 
+minimatch@^11.0.5:
+  version "11.0.9"
+  resolved "https://registry.npmmirror.com/minimatch/-/minimatch-11.0.9.tgz#00d0088671fa0d872ba1e2578f5abf3be0fe878e"
+  integrity sha512-KCFkfyjqerNlSstjlhIGNXIKZGA/6O4V4RlhZ+Dsr621SPPw0mzlypE9D9ZOoPiVefHID+j7/XuMMlqfD/F60Q==
+  dependencies:
+    "@isaacs/nonrecursive-glob-match" "^1.1.0"
+    brace-expansion "^5.0.12"
+
 minimatch@^3.1.2, minimatch@^3.1.5:
   version "3.1.5"
   resolved "https://registry.npmmirror.com/minimatch/-/minimatch-3.1.5.tgz#580c88f8d5445f2bd6aa8f3cadefa0de79fbd69e"
@@ -5076,6 +5149,14 @@ path-scurry@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmmirror.com/path-scurry/-/path-scurry-2.0.2.tgz#6be0d0ee02a10d9e0de7a98bae65e182c9061f85"
   integrity sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==
+  dependencies:
+    lru-cache "^11.0.0"
+    minipass "^7.1.2"
+
+path-scurry@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmmirror.com/path-scurry/-/path-scurry-3.0.0.tgz#384894267bb8d1889242d176433f91ae1eec5cbb"
+  integrity sha512-1pTbQqH1wIwMi/eleQ5leFTTCkzFsPcgXNjwOA8YGGW/W4/kHT3dssE7Z6NH+zuqNLOzOB0uaD61yl7cAcVhgg==
   dependencies:
     lru-cache "^11.0.0"
     minipass "^7.1.2"
@@ -5741,7 +5822,7 @@ signal-exit@^3.0.2:
   resolved "https://registry.npmmirror.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
 
-simple-plist@^1.1.0:
+simple-plist@^1.1.0, simple-plist@^1.3.1:
   version "1.3.1"
   resolved "https://registry.npmmirror.com/simple-plist/-/simple-plist-1.3.1.tgz#16e1d8f62c6c9b691b8383127663d834112fb017"
   integrity sha512-iMSw5i0XseMnrhtIzRb7XpQEXepa9xhWxGUojHBL43SIpQuDQkh3Wpy67ZbDzZVr6EKxvwVChnVpdl8hEVLDiw==
@@ -6415,6 +6496,13 @@ xcode@^3.0.1:
   dependencies:
     simple-plist "^1.1.0"
     uuid "^7.0.3"
+
+xcode@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmmirror.com/xcode/-/xcode-4.0.0.tgz#cbcd6125a712d32478b27ee730afc4db4122b902"
+  integrity sha512-dDaoWzc9EP2fp9FS9PVZUkyvFxY4y1TOV9pcKaKLk++Ei/qb97XDFEVP7GnW7Osii/TzVABJ0jq2F+9/lq0TVA==
+  dependencies:
+    simple-plist "^1.3.1"
 
 xml2js@0.6.0:
   version "0.6.0"
